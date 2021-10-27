@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "SwiftConcurrency",
+        "repositoryURL": "https://github.com/xiiagency/SwiftConcurrency",
+        "state": {
+          "branch": "main",
+          "revision": "0dbf6a605cb851ac77a2109dd9d48b4dbbb10cbd",
+          "version": null
+        }
+      },
+      {
+        "package": "SwiftFoundationExtensions",
+        "repositoryURL": "https://github.com/xiiagency/SwiftFoundationExtensions",
+        "state": {
+          "branch": "main",
+          "revision": "3560bdd3bba85139c1dd280d4609d7bc2b514261",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}

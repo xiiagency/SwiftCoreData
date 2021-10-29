@@ -86,6 +86,11 @@ extension NSPersistentCloudKitContainer {
     request.resultType = .events
     request.affectedStores = affectedStores
     
+    // Initial delay to allow SQLite to propagate initialization if needed.
+    // NOTE: Needed since we are querying for events from the container and that table needs
+    //       to have been created first.
+    try await Task.sleep(seconds: pollIntervalSeconds)
+    
     // Poll for events, checking import status.
     // NOTE: Task closure is executed on the main actor so that it can have access to the
     //       `viewContext` of the container.

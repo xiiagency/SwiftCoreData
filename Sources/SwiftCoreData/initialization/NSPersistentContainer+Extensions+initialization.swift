@@ -1,6 +1,38 @@
 import CoreData
 
 extension NSPersistentContainer {
+  
+  /**
+   Creates a `NSPersistentContainer` with a specific name (matching the models file) and a set of
+   `NSPersistentStore`s to be created from their individual `CoreDataStoreConfiguration`.
+   
+   - Parameter name: The name of the container, matching its models definition file.
+   - Parameter stores: List of `CoreDataStoreConfigurations`, describing the `NSPersistentStore`s for the container.
+   
+   NOTE: The store descriptions used MUST not have iCloud configured stores.
+   */
+  public static func create(
+    name: String,
+    stores: [CoreDataStoreConfiguration]
+  ) async throws -> Self {
+    // Create the container with the requested name.
+    let container = Self.init(name: name)
+    
+    // Create all requested stores from their configurations.
+    let storeDescriptions = stores.map { configuration in configuration.storeDescription }
+    
+    // Set the store as the backing store of the container.
+    container.persistentStoreDescriptions = storeDescriptions
+    
+    // Prepare the container by loading its stores.
+    try await container.loadPersistentStores()
+    
+    // Set up main context's options, after the store has been initialized.
+    try await container.setupViewContext()
+    
+    return container
+  }
+  
   /**
    PREVIEW SUPPORT: Initializes a mock in memory container with the given name.
    */

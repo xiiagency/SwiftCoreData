@@ -28,11 +28,23 @@ public enum CoreDataStoreConfiguration {
   case TransientInMemoryStore(configurationName: String?)
   
   /**
+   A local SQLite store that is not connected to iCloud.
+   
+   - Parameter sqliteName: The name of the sqlite file (not the full path).
+   - Parameter configurationName: The model configuration name to use, if any.
+   */
+  case LocalSqliteStore(
+    sqliteName: String,
+    configurationName: String?
+  )
+  
+  /**
    Returns the full `URL` of the store, based on it's type and description.
    */
   public var storeUrl: URL {
     switch self {
-    case let .CloudSynchedSqliteStore(sqliteName, _, _, _):
+    case let .CloudSynchedSqliteStore(sqliteName, _, _, _),
+         let .LocalSqliteStore(sqliteName, _):
       return NSPersistentContainer.defaultDirectoryURL().appendingPathComponent(sqliteName)
       
     case .TransientInMemoryStore:
@@ -58,7 +70,13 @@ public enum CoreDataStoreConfiguration {
         storeUrl: storeUrl,
         configurationName: configurationName
       )
-      
+    
+    case let .LocalSqliteStore(_, configurationName):
+      return getLocalSqliteStoreDescription(
+        storeUrl: storeUrl,
+        configurationName: configurationName
+      )
+    
     }
   }
   
@@ -76,14 +94,11 @@ public enum CoreDataStoreConfiguration {
     cloudContainerScope: CKDatabase.Scope,
     configurationName: String?
   ) -> NSPersistentStoreDescription {
-    // Initialize the store.
-    let store = NSPersistentStoreDescription(url: storeUrl)
-    
-    // Make it a SQLite store with tracking and remote change notifications.
-    store.type = NSSQLiteStoreType
-    store.configuration = configurationName
-    store.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
-    store.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+    // Configure the local portion of the store first.
+    let store = getLocalSqliteStoreDescription(
+      storeUrl: storeUrl,
+      configurationName: configurationName
+    )
     
     // Set up iCloud mirroring.
     let cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(
@@ -110,5 +125,27 @@ public enum CoreDataStoreConfiguration {
     transientStore.configuration = configurationName
     
     return transientStore
+  }
+  
+  /**
+   Returns an `NSPersistentStoreDescription` for the specifications of a SQLite local store WITHOUT iCloud sync.
+   
+   - Parameter storeUrl: The local URL of the store.
+   - Parameter configurationName: The model configuration name to use, if any.
+   */
+  private func getLocalSqliteStoreDescription(
+    storeUrl: URL,
+    configurationName: String?
+  ) -> NSPersistentStoreDescription {
+    // Initialize the store.
+    let store = NSPersistentStoreDescription(url: storeUrl)
+    
+    // Make it a SQLite store with tracking and remote change notifications.
+    store.type = NSSQLiteStoreType
+    store.configuration = configurationName
+    store.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+    store.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+    
+    return store
   }
 }

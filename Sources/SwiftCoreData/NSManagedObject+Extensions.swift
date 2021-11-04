@@ -145,4 +145,20 @@ extension NSManagedObject {
   public func set<Source : NSManagedObject>(_ value: [Source]) -> NSSet? {
     NSSet(array: value)
   }
+  
+  /**
+   Converts a stored `String` into a `URL` value.
+   
+   NOTE: Will fatal error if the given value is nil.
+   */
+  public func get(_ value: String?) -> URL {
+    URL(string: get(value))!
+  }
+  
+  /**
+   Converts a `URL` value to a stored attribute `String` value.
+   */
+  public func set(_ value: URL) -> String {
+    value.absoluteString
+  }
 }

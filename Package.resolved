@@ -5,18 +5,18 @@
         "package": "SwiftConcurrency",
         "repositoryURL": "https://github.com/xiiagency/SwiftConcurrency",
         "state": {
-          "branch": "main",
-          "revision": "0dbf6a605cb851ac77a2109dd9d48b4dbbb10cbd",
-          "version": null
+          "branch": null,
+          "revision": "d2035ef57f80ddf12e8fcbc29a16fa2fcd7874a3",
+          "version": "1.0.0"
         }
       },
       {
         "package": "SwiftFoundationExtensions",
         "repositoryURL": "https://github.com/xiiagency/SwiftFoundationExtensions",
         "state": {
-          "branch": "main",
-          "revision": "3560bdd3bba85139c1dd280d4609d7bc2b514261",
-          "version": null
+          "branch": null,
+          "revision": "7c821dc666239bcf956d5b91a2610db61d8b5fdf",
+          "version": "1.0.0"
         }
       }
     ]
